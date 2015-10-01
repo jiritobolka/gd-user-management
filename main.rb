@@ -7,7 +7,7 @@ class UMan
        
        @api_endpoint = 'https://syrup.keboola.com/gooddata-writer'
        @writer_id = 'jt_user_management_'
-       @kbc_api_token = '534-39323-7a720fd51fe9d9595a6dd4460eafc346390c52f6'
+       @kbc_api_token = ''
        @users = 'data/users.csv'
        
        #testovaci pid -> budeme muset ziskat z Writeru
