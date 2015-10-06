@@ -12,7 +12,7 @@ class UMan
         @config = JSON.parse(File.read(options[:data] + '/config.json'))
         
         @writer_id = @config["parameters"]["gd_writer"]
-        @kbc_api_token = @config["parameters"]["kbc_api_token"]
+        @kbc_api_token = ENV["KBC_TOKEN"]
         
     end
     
