@@ -13,10 +13,6 @@ then
     exit 1
 end
 
-puts options[:data] + '/config.json'
-puts "#{options[:data]}/in/tables/users.csv"
-
-# test use case
 manager = UMan.new(options)
 
 CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
@@ -24,10 +20,15 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
     case csv['action']
         when "DISABLE"
         
-            result = manager.deactivate_user(csv['user'],csv['pid'])
+            usrs = JSON.parse(manager.get_users())['users']
+            filtered = usrs.select { |u| u['email'] == csv['user'] }
+            uid = filtered[0]['uid']
+        
+            result = manager.deactivate_user(uid,csv['pid'])
             CSV.open(options[:data] + '/out/tables/status.csv', "ab") do |status|
                 status << [csv['user'], result]
             end
+        
         
         when "ENABLE"
         
