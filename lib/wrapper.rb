@@ -1,4 +1,4 @@
-require 'rest-client'
+require 'rest_client'
 require 'csv'
 require 'optparse'
 require 'yaml'
