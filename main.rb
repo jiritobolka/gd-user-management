@@ -25,7 +25,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
             uid = filtered[0]['uid']
         
             result = manager.deactivate_user(uid,csv['pid'])
-            CSV.open(options[:data] + '/out/tables/status.csv', "ab") do |status|
+            CSV.open(options[:data] + '/out/tables/out.c-jt-devel.status.csv', "ab") do |status|
                 status << [csv['user'], result]
             end
         
@@ -33,7 +33,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
         when "ENABLE"
         
             result = manager.add_to_project(csv['user'],csv['role'],csv['pid'])
-            CSV.open(options[:data] + '/out/tables/status.csv', "ab") do |status|
+            CSV.open(options[:data] + '/out/tables/out.c-jt-devel.status.csv', "ab") do |status|
                 status << [csv['user'], result]
             end
         
