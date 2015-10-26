@@ -14,6 +14,10 @@ class UMan
         @writer_id = @config["parameters"]["gd_writer"]
         @kbc_api_token = ENV["KBC_TOKEN"]
         
+        CSV.open(options[:data] + '/out/tables/out.c-jt-devel.status.csv', "ab") do |status|
+            status << ["user", "status"]
+        end
+        
     end
     
     # get users from GoodData Project
