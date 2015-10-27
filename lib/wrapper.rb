@@ -12,9 +12,11 @@ class UMan
         @config = JSON.parse(File.read(options[:data] + '/config.json'))
         
         @writer_id = @config["parameters"]["gd_writer"]
+        @out_bucket = @config["parameters"]["outputbucket"]
         @kbc_api_token = ENV["KBC_TOKEN"]
         
-        CSV.open(options[:data] + '/out/tables/out.c-jt-devel.status.csv', "ab") do |status|
+        $out_file = options[:data] + '/out/tables/' + @out_bucket + '.status.csv'
+        CSV.open($out_file.to_s, "ab") do |status|
             status << ["user", "status"]
         end
         
