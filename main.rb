@@ -25,16 +25,26 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
             uid = filtered[0]['uid']
         
             result = manager.deactivate_user(uid,csv['pid'])
+            
+            job_uri = JSON.parse(result)["url"]
+            job_id = JSON.parse(result)["job"]
+            job_status = JSON.parse(result)["status"]
+            
             CSV.open($out_file.to_s, "ab") do |status|
-                status << [csv['user'], result]
+                status << [csv['user'], job_id, job_status, job_uri, "REMOVE"]
             end
         
         
         when "ENABLE"
         
             result = manager.add_to_project(csv['user'],csv['role'],csv['pid'])
+            
+            job_uri = JSON.parse(result)["url"]
+            job_id = JSON.parse(result)["job"]
+            job_status = JSON.parse(result)["status"]
+            
             CSV.open($out_file.to_s, "ab") do |status|
-                status << [csv['user'], result]
+                status << [csv['user'], job_id, job_status, job_uri, "ADD"]
             end
         
         else
