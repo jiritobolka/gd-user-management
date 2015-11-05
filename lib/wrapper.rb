@@ -3,6 +3,7 @@ require 'csv'
 require 'optparse'
 require 'yaml'
 require 'json'
+require 'time'
 
 class UMan
     
@@ -17,7 +18,7 @@ class UMan
         
         $out_file = options[:data] + '/out/tables/' + @out_bucket + '.status.csv'
         CSV.open($out_file.to_s, "ab") do |status|
-            status << ["user", "job_id", "status" ,"link", "action_done"]
+            status << ["user", "job_id", "status" ,"link", "action_done", "timestamp"]
         end
         
     end

@@ -31,7 +31,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
             job_status = JSON.parse(result)["status"]
             
             CSV.open($out_file.to_s, "ab") do |status|
-                status << [csv['user'], job_id, job_status, job_uri, "REMOVE"]
+                status << [csv['user'], job_id, job_status, job_uri, "REMOVE", Time.now.getutc]
             end
         
         
@@ -44,7 +44,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
             job_status = JSON.parse(result)["status"]
             
             CSV.open($out_file.to_s, "ab") do |status|
-                status << [csv['user'], job_id, job_status, job_uri, "ADD"]
+                status << [csv['user'], job_id, job_status, job_uri, "ADD", Time.now.getutc]
             end
         
         else
