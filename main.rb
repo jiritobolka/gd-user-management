@@ -20,11 +20,12 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
     case csv['action']
         when "DISABLE"
         
-            usrs = JSON.parse(manager.get_users())['users']
-            filtered = usrs.select { |u| u['email'] == csv['user'] }
-            uid = filtered[0]['uid']
+        #usrs = JSON.parse(manager.get_users())['users']
+        #   filtered = usrs.select { |u| u['email'] == csv['user'] }
+        #   uid = filtered[0]['uid']
+        # result = manager.deactivate_user(uid,csv['pid'])
         
-            result = manager.deactivate_user(uid,csv['pid'])
+            result = manager.deactivate_user(csv['user'],csv['pid'])
             
             job_uri = JSON.parse(result)["url"]
             job_id = JSON.parse(result)["job"]

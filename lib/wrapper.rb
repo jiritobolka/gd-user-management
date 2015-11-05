@@ -80,8 +80,8 @@ class UMan
         
     end
     
-    # deactivate user in GoodData project
-    def deactivate_user(uid, pid)
+    # DEPRECATED deactivate user in GoodData project
+    def deactivate_user_old(uid, pid)
         
         #user_id = "f6059d2cd367193ac21f1af2b639a78f"
         
@@ -94,6 +94,21 @@ class UMan
         values = "{\n \"writerId\": \"#{@writer_id}\",\n \"query\": \"#{query}\",\n \"payload\": #{payload}\n}"
         
         response = RestClient.post "#{@api_endpoint}/proxy", values, headers
+        
+        return response
+        
+    end
+    
+    # deactivate user using built in KBC feature on API
+    def deactivate_user(user, pid)
+        
+        headers  = {:x_storageapi_token => @kbc_api_token, :accept => :json, :content_type => :json}
+        
+        resource = ("#{@api_endpoint}/project-users?writerId=#{@writer_id}&pid=#{pid}&email=#{user}")
+        
+        resource.gsub!("+", "%2B")
+        
+        response = RestClient.delete resource, headers
         
         return response
         
