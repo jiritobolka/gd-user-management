@@ -28,11 +28,22 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
             result = manager.deactivate_user(csv['user'],csv['pid'])
             
             job_uri = JSON.parse(result)["url"]
+            
+            headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
+            
+            finished = false
+            until finished
+                res = RestClient.get job_uri, headers
+                finished  = JSON.parse(res)["isFinished"]
+            end
+            
+            job_status = JSON.parse(res)["status"]
+            message = JSON.parse(res)["result"][0]
+            
             job_id = JSON.parse(result)["job"]
-            job_status = JSON.parse(result)["status"]
             
             CSV.open($out_file.to_s, "ab") do |status|
-                status << [csv['user'], job_id, job_status, job_uri, "REMOVE", Time.now.getutc]
+                status << [csv['user'], job_id, job_status, message, "DISABLE", Time.now.getutc]
             end
         
         
@@ -40,12 +51,24 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
         
             result = manager.add_to_project(csv['user'],csv['role'],csv['pid'])
             
+            
             job_uri = JSON.parse(result)["url"]
+            
+            headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
+            
+            finished = false
+            until finished
+                res = RestClient.get job_uri, headers
+                finished  = JSON.parse(res)["isFinished"]
+            end
+            
+            job_status = JSON.parse(res)["status"]
+            message = JSON.parse(res)["result"][0]
+            
             job_id = JSON.parse(result)["job"]
-            job_status = JSON.parse(result)["status"]
             
             CSV.open($out_file.to_s, "ab") do |status|
-                status << [csv['user'], job_id, job_status, job_uri, "ADD", Time.now.getutc]
+                status << [csv['user'], job_id, job_status, "ENABLE", Time.now.getutc]
             end
         
         else
