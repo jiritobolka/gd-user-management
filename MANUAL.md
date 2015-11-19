@@ -20,7 +20,7 @@ user@domain.com, 154626486, success, ENABLE, 2015-11-11 15:14:45 UTC
 
 ### So how to start?
 
-1) Create list of user - actions
-2) Setup the input mapping and writer id
-3) Run the App
-4) Check the result
+1) Create list of user - actions  
+2) Setup the input mapping and writer-id  
+3) Run the App  
+4) Check the result  
