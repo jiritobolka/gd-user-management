@@ -8,15 +8,15 @@ You specify user list and action that is done by app using the KBC stored tables
 
 See the example input below:
 
-user, pid, action, writer_id, role, sso_provider
-user@domain.com, x8rtiybsfuyxsrjqgw3quh4lrhco853a, DISABLE, writer_id, admin, sso-provider
+user, pid, action, writer_id, role, sso_provider  
+user@domain.com, x8rtiybsfuyxsrjqgw3quh4lrhco853a, DISABLE, writer_id, admin, sso-provider  
 
-All you need to do is to map table in the input mapping and specify **writer_id** that will be handling the requests.  
+All you need to do is to map table in the input mapping and specify **writer_id** that will be handling the requests. You can extract writer ID from the URL of your specific GD Writer.  
 
 See the example output below:
 
-user, job_id, status, action_done, timestamp
-user@domain.com, 154626486, success, ENABLE, 2015-11-11 15:14:45 UTC
+user, job_id, status, action_done, timestamp  
+user@domain.com, 154626486, success, ENABLE, 2015-11-11 15:14:45 UTC  
 
 ### So how to start?
 
