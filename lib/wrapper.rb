@@ -4,6 +4,7 @@ require 'optparse'
 require 'yaml'
 require 'json'
 require 'time'
+require 'securerandom'
 
 class UMan
     
@@ -17,6 +18,7 @@ class UMan
         @kbc_api_token = ENV["KBC_TOKEN"]
         
         $out_file = options[:data] + '/out/tables/' + @out_bucket + '.status.csv'
+        
         CSV.open($out_file.to_s, "ab") do |status|
             status << ["user", "job_id", "status", "action_done", "timestamp"]
         end
@@ -50,14 +52,14 @@ class UMan
     end
     
     #create new user in Keboola Organization
-    def create_user(user,pass,firstname,lastname)
+    def create_user(user,pass,firstname,lastname,sso_provider)
         
         #   test_user = 'jiri.tobolka+kbc@bizztreat.com'
         #   pass = 'akbvgdrz77'
         #   firstname = 'J'
         #   lastname = 'T'
         
-        values   = "{ \"writerId\": \"#{@writer_id}\", \"email\": \"#{test_user}\", \"password\": \"#{pass}\", \"firstName\": \"#{firstname}\", \"lastName\": \"#{lastname}\"}"
+        values   = "{\"writerId\": \"#{@writer_id}\", \"email\": \"#{user}\", \"password\": \"#{pass}\", \"firstName\": \"#{firstname}\", \"lastName\": \"#{lastname}\", \"ssoProvider\": \"#{sso_provider}\"}"
         
         headers  = {:x_storageapi_token => @kbc_api_token, :accept => :json, :content_type => :json}
         

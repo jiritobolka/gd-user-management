@@ -49,26 +49,79 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
         
         when "ENABLE"
         
-            result = manager.add_to_project(csv['user'],csv['role'],csv['pid'])
+            if (csv['sso_provider'].to_s != '')
+                then
+                
+                    # create user with sso provider
+                    result = manager.create_user(csv['user'], SecureRandom.hex.to_s, csv['firstname'], csv['lastname'], csv['sso_provider'])
+                
+                    job_uri = JSON.parse(result)["url"]
+                
+                    headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
+                
+                    finished = false
+                    until finished
+                        res = RestClient.get job_uri, headers
+                        finished  = JSON.parse(res)["isFinished"]
+                    end
+                
+                    job_status = JSON.parse(res)["status"]
+                    message = JSON.parse(res)["result"][0]
+                
+                    job_id = JSON.parse(result)["job"]
+                    
+                    CSV.open($out_file.to_s, "ab") do |status|
+                        status << [csv['user'], job_id, job_status, "CREATE", Time.now.getutc]
+                    end
+                    
+                    
+                    if job_status != 'error' then
+                    
+                        # push the new user to the project directly
+                        result = manager.add_to_project(csv['user'],csv['role'],csv['pid'])
+                    
+                        job_uri = JSON.parse(result)["url"]
+                    
+                        headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
+                    
+                        finished = false
+                        until finished
+                            res = RestClient.get job_uri, headers
+                            finished  = JSON.parse(res)["isFinished"]
+                        end
+                    
+                        job_status = JSON.parse(res)["status"]
+                        message = JSON.parse(res)["result"][0]
+                    
+                        job_id = JSON.parse(result)["job"]
+                    
+                        CSV.open($out_file.to_s, "ab") do |status|
+                            status << [csv['user'], job_id, job_status, "ADD", Time.now.getutc]
+                        end
+                    end
+
+                else
+                
+                    result = manager.add_to_project(csv['user'],csv['role'],csv['pid'])
             
+                    job_uri = JSON.parse(result)["url"]
             
-            job_uri = JSON.parse(result)["url"]
+                    headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
             
-            headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
+                    finished = false
+                    until finished
+                        res = RestClient.get job_uri, headers
+                        finished  = JSON.parse(res)["isFinished"]
+                    end
             
-            finished = false
-            until finished
-                res = RestClient.get job_uri, headers
-                finished  = JSON.parse(res)["isFinished"]
-            end
+                    job_status = JSON.parse(res)["status"]
+                    message = JSON.parse(res)["result"][0]
             
-            job_status = JSON.parse(res)["status"]
-            message = JSON.parse(res)["result"][0]
+                    job_id = JSON.parse(result)["job"]
             
-            job_id = JSON.parse(result)["job"]
-            
-            CSV.open($out_file.to_s, "ab") do |status|
-                status << [csv['user'], job_id, job_status, "ENABLE", Time.now.getutc]
+                    CSV.open($out_file.to_s, "ab") do |status|
+                        status << [csv['user'], job_id, job_status, "ENABLE", Time.now.getutc]
+                    end
             end
         
         else

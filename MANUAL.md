@@ -12,10 +12,14 @@ ENABLE, DISABLE
 
 See the example input below:
 
-user, pid, action, writer_id, role, sso_provider  
-user@domain.com, x8rtiybsfuyxsrjqgw3quh4lrhco853a, DISABLE, writer_id, admin, sso-provider  
+user, pid, action, writer_id, role, sso_provider, firstname, lastname
+user@domain.com, x8rtiybsfuyxsrjqgw3quh4lrhco853a, DISABLE, writer_id, admin, sso-provider, George, First  
 
 All you need to do is to map table in the input mapping and specify **writer_id** that will be handling the requests as well as output table in SAPI. 
+
+Input mapping should be set to:
+
+`your-table-in-sapi` -> `in/tables/users.csv`  
 
 See the configuration JSON below:  
 
@@ -39,3 +43,5 @@ user@domain.com, 154626486, success, ENABLE, 2015-11-11 15:14:45 UTC
 2) Setup the input mapping and writer-id  
 3) Run the App  
 4) Check the result  
+
+You can also use the app in any Orchestration as a regular job.
