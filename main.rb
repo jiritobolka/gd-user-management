@@ -122,6 +122,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
                     CSV.open($out_file.to_s, "ab") do |status|
                         status << [csv['user'], job_id, job_status, "ENABLE", Time.now.getutc]
                     end
+                    
             end
         
         else
@@ -132,4 +133,22 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
 end
 
 puts 'User provisioning finished.'
+
+if ($set_variables == 'true') then
+    
+    puts "I'm setting variable now..."
+    
+    variable_file = options[:data] + '/in/tables/variables.csv'
+    
+    manager.set_existing_variable_bulk(variable_file,$gd_pid)
+    
+    #CSV.foreach(options[:data] + '/in/tables/variables.csv', :headers => true) do |row|
+    #if row['user'] == csv['user']
+    #        then
+    #            manager.set_existing_variable(csv['pid'], row['variable'], row['values'], row['user'])
+    #        end
+    #end
+    
+end
+
 exit 0

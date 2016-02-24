@@ -5,6 +5,7 @@ require 'yaml'
 require 'json'
 require 'time'
 require 'securerandom'
+require 'gooddata'
 
 class UMan
     
@@ -15,6 +16,10 @@ class UMan
         
         @writer_id = @config["parameters"]["gd_writer"]
         @out_bucket = @config["parameters"]["outputbucket"]
+        $set_variables = @config["parameters"]["setvariables"]
+        $gd_pid = @config["parameters"]["pid"]
+        $gd_username = @config["parameters"]["gd_username"]
+        $gd_password = @config["parameters"]["gd_password"]
         @kbc_api_token = ENV["KBC_TOKEN"]
         
         $out_file = options[:data] + '/out/tables/' + @out_bucket + '.status.csv'
@@ -144,5 +149,91 @@ class UMan
     def save_output
         
     end
+    
+    # method to assign user values for existing variables (using GoodData Ruby Automation SDK)
+    def set_existing_variable_dev(project, var_title, var_values, user)
+        
+        # assign to username
+        username = $gd_username
+        password = $gd_password
+        
+        $client = GoodData.connect(username, password)
+        
+        project = $client.projects(project)
+        
+        var = project.variables.find { |v| v.title == var_title}
+        
+        var_attr = var.content['attribute']
+        
+        attribute = project.attributes(var_attr)
+        
+        label = attribute.primary_label
+        
+        values = var_values.split(",")
+        
+        filters = []
+        
+        filters.push([user, label] + values)
+        
+        puts filters
+        
+        project.add_variable_permissions(filters, var)
+
+        GoodData.disconnect
+        
+    end
+    
+    def set_existing_variable_bulk(csv, project)
+        
+        # assign to username
+        username = $gd_username
+        password = $gd_password
+        
+        $client = GoodData.connect(username, password)
+        
+        project = $client.projects(project)
+        
+        array = []
+        CSV.foreach(csv, :headers => true) do |row|
+            
+            array << row['variable']
+            
+            array.uniq
+            
+        end
+        
+        array.each do |vrr|
+            
+            var = project.variables.find { |v| v.title == vrr}
+            
+            var_attr = var.content['attribute']
+            
+            attribute = project.attributes(var_attr)
+            
+            label = attribute.primary_label
+            
+            filters = []
+            
+            
+            CSV.foreach(csv, :headers => true) do |row|
+                if row['variable'] == vrr
+                    then
+                    
+                    values = row['values'].split(",")
+                    
+                    filters.push([row['user'], label] + values)
+                    
+                end
+            end
+            
+            project.add_variable_permissions(filters, var)
+            
+        end
+        
+        GoodData.disconnect
+        
+    end
+    
+
     
 end
