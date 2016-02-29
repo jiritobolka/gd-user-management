@@ -19,7 +19,7 @@ class UMan
         $set_variables = @config["parameters"]["setvariables"]
         $gd_pid = @config["parameters"]["pid"]
         $gd_username = @config["parameters"]["gd_username"]
-        $gd_password = @config["parameters"]["gd_password"]
+        $gd_password = @config["parameters"]["#gd_password"]
         @kbc_api_token = ENV["KBC_TOKEN"]
         
         $out_file = options[:data] + '/out/tables/' + @out_bucket + '.status.csv'
