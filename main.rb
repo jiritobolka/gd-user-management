@@ -15,7 +15,7 @@ end
 
 manager = UMan.new(options)
 
-CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true) do |csv|
+CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding => 'utf-8') do |csv|
     
     case csv['action']
         when "DISABLE"

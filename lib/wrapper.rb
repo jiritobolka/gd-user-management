@@ -194,7 +194,7 @@ class UMan
         project = $client.projects(project)
         
         array = []
-        CSV.foreach(csv, :headers => true) do |row|
+        CSV.foreach(csv, :headers => true, :encoding => 'utf-8') do |row|
             
             array << row['variable']
             
@@ -215,7 +215,7 @@ class UMan
             filters = []
             
             
-            CSV.foreach(csv, :headers => true) do |row|
+            CSV.foreach(csv, :headers => true, :encoding => 'utf-8') do |row|
                 if row['variable'] == vrr
                     then
                     
