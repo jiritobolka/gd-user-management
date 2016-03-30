@@ -71,7 +71,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                     job_id = JSON.parse(result)["job"]
 
                     CSV.open($out_file.to_s, "ab") do |status|
-                        status << [csv['user'], job_id, job_status, "CREATE", Time.now.getutc, ""]
+                        status << [csv['user'], job_id, job_status, "CREATE", Time.now.getutc, "", ""]
                     end
 
 
@@ -96,7 +96,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                         job_id = JSON.parse(result)["job"]
 
                         CSV.open($out_file.to_s, "ab") do |status|
-                            status << [csv['user'], job_id, job_status, "ADD", Time.now.getutc, csv['role']]
+                            status << [csv['user'], job_id, job_status, "ADD", Time.now.getutc, csv['role'], ""]
                         end
                     end
 
@@ -120,10 +120,54 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                     job_id = JSON.parse(result)["job"]
 
                     CSV.open($out_file.to_s, "ab") do |status|
-                        status << [csv['user'], job_id, job_status, "ENABLE", Time.now.getutc, csv['role']]
+                        status << [csv['user'], job_id, job_status, "ENABLE", Time.now.getutc, csv['role'], ""]
                     end
 
             end
+
+            if (csv['muf'].to_s != '') then
+             # set user filter
+             muf_arr = csv['muf']
+             muf_user = []
+
+             JSON.parse(muf_arr).each { |x|
+             muf_name = x['attribute'] + '_' + csv['user']
+             x.store("name", muf_name)
+             muf = x.to_json
+
+             result = manager.create_muf(muf,@writer_id)
+             muf_user.push(result[0])
+
+             job = result[1]
+             job_uri = JSON.parse(job)["url"]
+             headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
+
+             finished = ''
+             until finished == 'success'
+               res = RestClient.get job_uri, headers
+               finished  = JSON.parse(res)["status"]
+             end
+             }
+
+             muf_user = muf_user.to_json
+             result = manager.assign_muf(muf_user, csv['user'], @writer_id)
+             puts 'MUF assigned'
+
+             job = result
+             job_uri = JSON.parse(job)["url"]
+             headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
+
+             finished = ''
+             until finished == 'success'
+               res = RestClient.get job_uri, headers
+               finished  = JSON.parse(res)["status"]
+             end
+
+             CSV.open($out_file.to_s, "ab") do |status|
+                 status << [csv['user'], job_id, job_status, "MUF_ASSIGNED", Time.now.getutc, csv['role'], csv['muf']]
+             end
+
+          end
 
         else
             puts "ERROR: no action specified for #{csv['user']}"

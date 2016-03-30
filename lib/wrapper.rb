@@ -25,7 +25,7 @@ class UMan
         $out_file = options[:data] + '/out/tables/' + @out_bucket + '.status.csv'
 
         CSV.open($out_file.to_s, "ab") do |status|
-            status << ["user", "job_id", "status", "action_done", "timestamp", "role"]
+            status << ["user", "job_id", "status", "action_done", "timestamp", "role", "muf"]
         end
 
     end
@@ -181,6 +181,25 @@ class UMan
 
         GoodData.disconnect
 
+    end
+
+    def create_muf(muf, writer_id)
+        headers  = {:x_storageapi_token => @kbc_api_token, :accept => :json, :content_type => :json}
+
+        response = RestClient.post "https://syrup.keboola.com/gooddata-writer/v2/#{@writer_id}/filters", muf, headers
+
+        name = JSON.parse(muf)['name']
+
+        return name, response
+    end
+
+    def assign_muf(mufs, user, writer_id)
+
+        headers  = {:x_storageapi_token => @kbc_api_token, :accept => :json, :content_type => :json}
+
+        response = RestClient.put "https://syrup.keboola.com/gooddata-writer/v2/#{@writer_id}/users/#{user}/filters", mufs, headers
+
+        return response
     end
 
     def set_existing_variable_bulk(csv, project)
