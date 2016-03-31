@@ -131,7 +131,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
              muf_user = []
 
              JSON.parse(muf_arr).each { |x|
-             muf_name = x['attribute'] + '_' + csv['user'] + '_' + Time.now.getutc
+             muf_name = x['attribute'] + '_' + csv['user'] + '_' + Time.now.getutc.to_s
              x.store("name", muf_name)
              muf = x.to_json
 
