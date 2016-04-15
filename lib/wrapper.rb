@@ -22,7 +22,8 @@ class UMan
         $gd_password = @config["parameters"]["#gd_password"]
         @kbc_api_token = ENV["KBC_TOKEN"]
 
-        $out_file = options[:data] + '/out/tables/' + @out_bucket + '.status.csv'
+        #$out_file = options[:data] + '/out/tables/' + @out_bucket + '.status.csv'
+        $out_file = options[:data] + '/out/tables/' + 'status.csv'
 
         CSV.open($out_file.to_s, "ab") do |status|
             status << ["user", "job_id", "status", "action_done", "timestamp", "role", "muf"]
