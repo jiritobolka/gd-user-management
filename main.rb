@@ -183,8 +183,25 @@ if ($set_variables == 'true') then
     puts "I'm setting variable now..."
 
     variable_file = options[:data] + '/in/tables/variables.csv'
+    success = false
 
-    manager.set_existing_variable_bulk(variable_file,$gd_pid)
+  until success
+    begin
+          manager.set_existing_variable_bulk(variable_file,$gd_pid)
+
+          rescue Exception => msg
+
+                       message = msg.to_s.split('(')[1].split(',')[0].split('"')[1]
+                       puts "oh,shit! Someone is not in the project! Will added later."
+
+                       manager.clean_csv(variable_file,message)
+                       #manager.set_existing_variable_bulk(variable_file,$gd_pid)
+                       #puts message
+
+          else
+                       success = true
+    end
+  end
 
     #CSV.foreach(options[:data] + '/in/tables/variables.csv', :headers => true) do |row|
     #if row['user'] == csv['user']

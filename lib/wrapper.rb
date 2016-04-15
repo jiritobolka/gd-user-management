@@ -6,6 +6,7 @@ require 'json'
 require 'time'
 require 'securerandom'
 require 'gooddata'
+require 'fileutils'
 
 class UMan
 
@@ -203,6 +204,24 @@ class UMan
         return response
     end
 
+    def clean_csv(file,user)
+
+      csv = CSV.read(file, :encoding => 'utf-8', :headers => :first_row, :return_headers => true)
+
+      csv.by_row!
+      csv.delete_if do |row|
+          !row.header_row? && row.field('user') == user
+      end
+
+      CSV.open("temp.csv","wb") do |csv_out|
+          csv.by_row!
+          csv.each{ |row| csv_out << row }
+      end
+
+      FileUtils.mv("temp.csv", file, :force => true)
+
+    end
+
     def set_existing_variable_bulk(csv, project)
 
         # assign to username
@@ -214,6 +233,7 @@ class UMan
         project = $client.projects(project)
 
         array = []
+
         CSV.foreach(csv, :headers => true, :encoding => 'utf-8') do |row|
 
             array << row['variable']
