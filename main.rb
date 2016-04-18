@@ -192,7 +192,7 @@ if ($set_variables == 'true') then
           rescue Exception => msg
 
                        message = msg.to_s.split('(')[1].split(',')[0].split('"')[1]
-                       puts "oh,shit! Someone is not in the project! Will added later."
+                       puts "Oh! User - #{message} is not in the project! Will added later in the next run."
 
                        manager.clean_csv(variable_file,message)
                        #manager.set_existing_variable_bulk(variable_file,$gd_pid)
