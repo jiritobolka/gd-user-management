@@ -63,9 +63,11 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                     until finished
                         res = RestClient.get job_uri, headers
                         finished  = JSON.parse(res)["isFinished"]
+                        puts finished
                     end
 
                     job_status = JSON.parse(res)["status"]
+
                     message = JSON.parse(res)["result"][0]
 
                     job_id = JSON.parse(result)["job"]
@@ -75,9 +77,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                     end
 
 
-                    if job_status != 'error' then
-
-                        # push the new user to the project directly
+                    # push the new user to the project directly
                         result = manager.add_to_project(csv['user'],csv['role'],csv['pid'])
 
                         job_uri = JSON.parse(result)["url"]
@@ -100,30 +100,6 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                         end
                     end
 
-                else
-
-                    result = manager.add_to_project(csv['user'],csv['role'],csv['pid'])
-
-                    job_uri = JSON.parse(result)["url"]
-
-                    headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
-
-                    finished = false
-                    until finished
-                        res = RestClient.get job_uri, headers
-                        finished  = JSON.parse(res)["isFinished"]
-                    end
-
-                    job_status = JSON.parse(res)["status"]
-                    message = JSON.parse(res)["result"][0]
-
-                    job_id = JSON.parse(result)["job"]
-
-                    CSV.open($out_file.to_s, "ab") do |status|
-                        status << [csv['user'], job_id, job_status, "ENABLE", Time.now.getutc, csv['role'], ""]
-                    end
-
-            end
 
             if (csv['muf'].to_s != '') then
              # set user filter
