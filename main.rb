@@ -137,7 +137,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
 
              if job_status == 'success' then puts 'MUF  ' + muf_name + ' has been created'
 
-             else puts 'MUF ' + muf_name + ' has not been assigned'
+             else puts 'MUF ' + muf_name + ' has not been created'
 
              end
 
@@ -197,7 +197,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                   end
 
                   if job_status == 'success'
-                    then puts 'User has been deactivated due security reason (MUF has not been assigned properly)'
+                    then puts 'User has been deactivated due to security reason (MUF has not been assigned properly)'
                   end
 
               end
