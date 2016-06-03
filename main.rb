@@ -63,10 +63,12 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                     until finished
                         res = RestClient.get job_uri, headers
                         finished  = JSON.parse(res)["isFinished"]
-                        puts finished
                     end
 
                     job_status = JSON.parse(res)["status"]
+
+                    #puts job_status
+                    create_user_result = job_status
 
                     message = JSON.parse(res)["result"][0]
 
@@ -91,6 +93,10 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
                         end
 
                         job_status = JSON.parse(res)["status"]
+
+                        #puts job_status
+                        assign_to_project_result = job_status
+
                         message = JSON.parse(res)["result"][0]
 
                         job_id = JSON.parse(result)["job"]
@@ -116,32 +122,85 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
 
              job = result[1]
              job_uri = JSON.parse(job)["url"]
+
              headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
 
-             finished = ''
-             until finished == 'success'
+             finished = 'processing'
+             until finished != 'processing'
                res = RestClient.get job_uri, headers
+               # puts res
                finished  = JSON.parse(res)["status"]
              end
+
+             job_status = JSON.parse(res)["status"]
+             #puts job_status
+
+             if job_status == 'success' then puts 'MUF  ' + muf_name + ' has been created'
+
+             else puts 'MUF ' + muf_name + ' has not been assigned'
+
+             end
+
+             CSV.open($out_file.to_s, "ab") do |status|
+                 status << [csv['user'], job_id, job_status, "MUF_CREATE", Time.now.getutc, csv['role'], csv['muf']]
+             end
+
              }
+
+
 
              muf_user = muf_user.to_json
              result = manager.assign_muf(muf_user, csv['user'], @writer_id)
-             puts 'MUF assigned'
 
              job = result
              job_uri = JSON.parse(job)["url"]
              headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
 
-             finished = ''
-             until finished == 'success'
+
+             finished = 'processing'
+             until finished != 'processing'
                res = RestClient.get job_uri, headers
                finished  = JSON.parse(res)["status"]
              end
 
+             job_status = JSON.parse(res)["status"]
+             #puts job_status
+
              CSV.open($out_file.to_s, "ab") do |status|
                  status << [csv['user'], job_id, job_status, "MUF_ASSIGNED", Time.now.getutc, csv['role'], csv['muf']]
              end
+
+             if job_status == 'success'
+
+                then puts 'MUF assigned'
+                else 'MUF has not been assigned'
+
+                  result = manager.deactivate_user(csv['user'],csv['pid'])
+
+                  job_uri = JSON.parse(result)["url"]
+
+                  headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
+
+                  finished = false
+                  until finished
+                      res = RestClient.get job_uri, headers
+                      finished  = JSON.parse(res)["isFinished"]
+                  end
+
+                  job_status = JSON.parse(res)["status"]
+                  message = JSON.parse(res)["result"][0]
+
+                  job_id = JSON.parse(result)["job"]
+
+                  CSV.open($out_file.to_s, "ab") do |status|
+                      status << [csv['user'], job_id, job_status, "DISABLED", Time.now.getutc, "", ""]
+                  end
+
+                  if job_status == 'success'
+                    then puts 'User has been deactivated due security reason (MUF has not been assigned properly)'
+                  end
+
+              end
 
           end
 
