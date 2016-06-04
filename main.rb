@@ -125,8 +125,8 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
 
              headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
 
-             finished = 'processing'
-             until finished != 'processing'
+             finished = ''
+             until (finished == 'success' or finished == 'error')
                res = RestClient.get job_uri, headers
                # puts res
                finished  = JSON.parse(res)["status"]
@@ -157,8 +157,8 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
              headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
 
 
-             finished = 'processing'
-             until finished != 'processing'
+             finished = ''
+             until (finished == 'success' or finished == 'error')
                res = RestClient.get job_uri, headers
                finished  = JSON.parse(res)["status"]
              end
