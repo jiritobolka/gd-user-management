@@ -118,7 +118,6 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
              muf = x.to_json
 
              result = manager.create_muf(muf,@writer_id)
-             muf_user.push(result[0])
 
              job = result[1]
              job_uri = JSON.parse(job)["url"]
@@ -135,10 +134,11 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
              job_status = JSON.parse(res)["status"]
              #puts job_status
 
-             if job_status == 'success' then puts 'MUF ' + muf_name + ' has been created'
-
-             else puts 'MUF ' + muf_name + ' has not been created'
-
+             if job_status == 'success'
+                puts 'MUF ' + muf_name + ' has been created'
+                muf_user.push(JSON.parse(res)["result"][0]['uri'])
+             else
+                puts 'MUF ' + muf_name + ' has not been created'
              end
 
              CSV.open($out_file.to_s, "ab") do |status|
