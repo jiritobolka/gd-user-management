@@ -119,8 +119,7 @@ CSV.foreach(options[:data] + '/in/tables/users.csv', :headers => true, :encoding
 
              result = manager.create_muf(muf,@writer_id)
 
-             job = result[1]
-             job_uri = JSON.parse(job)["url"]
+             job_uri = JSON.parse(result)["url"]
 
              headers  = {:x_storageapi_token => ENV["KBC_TOKEN"], :accept => :json, :content_type => :json}
 
