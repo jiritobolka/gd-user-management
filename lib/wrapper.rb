@@ -18,6 +18,7 @@ class UMan
         @writer_id = @config["parameters"]["gd_writer"]
         @out_bucket = @config["parameters"]["outputbucket"]
         $set_variables = @config["parameters"]["setvariables"]
+        $simple_way = @config["parameters"]["simple_way"]
         $gd_pid = @config["parameters"]["pid"]
         $gd_username = @config["parameters"]["gd_username"]
         $gd_password = @config["parameters"]["#gd_password"]
@@ -274,6 +275,67 @@ class UMan
 
     end
 
+    def invite_users(csv, project)
 
+      gooddata = []
+
+      # assign to username
+      username = $gd_username
+      password = $gd_password
+
+      $client = GoodData.connect(username, password)
+      project = $client.projects(project)
+
+      gooddata_users = project.users.map {|u| [u.login]}
+
+      CSV.foreach(csv, :headers => true, :encoding => 'utf-8') do |row|
+
+          if !project.member?(row['user'])
+
+                puts "Inviting the user to project..."
+                email = row['user']
+                role = row['role']
+
+                project.invite(email, role)
+
+              end
+      end
+
+      GoodData.disconnect
+
+    end
+
+    def disable_what_is_not_input(csv, project)
+
+      username = $gd_username
+      password = $gd_password
+
+      $client = GoodData.connect(username, password)
+      project = $client.projects(project)
+
+      gooddata_users = project.users.map {|u| [u.login]}
+
+      input = CSV.read(csv, :headers=>true, :encoding => 'utf-8')['user']
+
+      gooddata_users.each { |usr|
+
+         if !input.to_s.include? usr.to_s
+           then
+
+            if !usr.to_s.include? 'keboola.com' then
+              if !usr.to_s.include? 'gooddata.com' then
+
+                  user_to_disable = project.member(usr[0])
+                  user_to_disable.disable
+                  puts "User #{usr[0]} has been disabled."
+
+                end
+              end
+           end
+      }
+
+      GoodData.disconnect
+
+    end
 
 end
