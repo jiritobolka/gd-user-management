@@ -189,18 +189,16 @@ class UMan
     def create_muf(muf, writer_id)
         headers  = {:x_storageapi_token => @kbc_api_token, :accept => :json, :content_type => :json}
 
-        response = RestClient.post "https://syrup.keboola.com/gooddata-writer/v2/#{@writer_id}/filters", muf, headers
+        response = RestClient.post "https://syrup.keboola.com/gooddata-writer/v2/#{@writer_id}/filters-proxy", muf, headers
 
-        name = JSON.parse(muf)['name']
-
-        return name, response
+        return response
     end
 
     def assign_muf(mufs, user, writer_id)
 
         headers  = {:x_storageapi_token => @kbc_api_token, :accept => :json, :content_type => :json}
 
-        response = RestClient.put "https://syrup.keboola.com/gooddata-writer/v2/#{@writer_id}/users/#{user}/filters", mufs, headers
+        response = RestClient.put "https://syrup.keboola.com/gooddata-writer/v2/#{@writer_id}/filters-proxy/#{user}", mufs, headers
 
         return response
     end
