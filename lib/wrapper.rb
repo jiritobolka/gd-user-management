@@ -71,8 +71,17 @@ class UMan
 
         headers  = {:x_storageapi_token => @kbc_api_token, :accept => :json, :content_type => :json}
 
-        response = RestClient.post "#{@api_endpoint}/users", values, headers
+        begin
+              response = RestClient.post "#{@api_endpoint}/users", values, headers
 
+              rescue Exception => msg
+
+                           puts msg
+                           #manager.clean_csv(variable_file,message)
+                           #manager.set_existing_variable_bulk(variable_file,$gd_pid)
+                           #puts message
+                end
+        
         return response
 
     end
