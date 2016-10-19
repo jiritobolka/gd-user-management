@@ -21,8 +21,37 @@ if ($simple_way == 'true') then
 
   user_file = options[:data] + '/in/tables/users.csv'
 
+  puts user_file
+
   manager.disable_what_is_not_input(user_file, $gd_pid)
   manager.invite_users(user_file, $gd_pid)
+
+  if ($set_variables == 'true') then
+
+      puts "I'm setting variable now..."
+
+      variable_file = options[:data] + '/in/tables/variables.csv'
+      success = false
+
+    until success
+      begin
+            manager.set_existing_variable_bulk(variable_file,$gd_pid)
+
+            rescue Exception => msg
+
+                         message = msg.to_s.split('(')[1].split(',')[0].split('"')[1]
+                         puts "Oh! User - #{message} is not in the project! Will added later in the next run."
+
+                         manager.clean_csv(variable_file,message)
+                         #manager.set_existing_variable_bulk(variable_file,$gd_pid)
+                         #puts message
+
+            else
+                         success = true
+      end
+    end
+
+  end
 
 else
 
@@ -257,33 +286,5 @@ end
 end
 
 puts 'User provisioning finished.'
-
-if ($set_variables == 'true') then
-
-    puts "I'm setting variable now..."
-
-    variable_file = options[:data] + '/in/tables/variables.csv'
-    success = false
-
-  until success
-    begin
-          manager.set_existing_variable_bulk(variable_file,$gd_pid)
-
-          rescue Exception => msg
-
-                       message = msg.to_s.split('(')[1].split(',')[0].split('"')[1]
-                       puts "Oh! User - #{message} is not in the project! Will added later in the next run."
-
-                       #manager.clean_csv(variable_file,message)
-                       #manager.set_existing_variable_bulk(variable_file,$gd_pid)
-                       #puts message
-
-          else
-                       success = true
-    end
-  end
-
-end
-
 
 exit 0

@@ -81,7 +81,7 @@ class UMan
                            #manager.set_existing_variable_bulk(variable_file,$gd_pid)
                            #puts message
                 end
-        
+
         return response
 
     end
@@ -325,8 +325,7 @@ class UMan
       input = CSV.read(csv, :headers=>true, :encoding => 'utf-8')['user']
 
       gooddata_users.each { |usr|
-
-         if !input.to_s.include? usr.to_s
+         if !input.to_s.include? usr[0]
            then
 
             if !usr.to_s.include? 'keboola.com' then
