@@ -329,7 +329,7 @@ class UMan
            then
 
             if !usr.to_s.include? 'keboola.com' then
-              if !usr.to_s.include? 'gooddata.com' then
+              if !usr.to_s.include? 'analytik@firma.seznam.cz' then
 
                   user_to_disable = project.member(usr[0])
                   user_to_disable.disable
