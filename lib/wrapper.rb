@@ -267,7 +267,7 @@ class UMan
                 if row['variable'] == vrr
                     then
 
-                    values = row['values'].split(",")
+                    values = row['value'].split(",")
 
                     filters.push([row['user'], label] + values)
 
