@@ -252,6 +252,8 @@ class UMan
 
         array.each do |vrr|
 
+            puts "Variable #{vrr} is being processed."
+
             var = project.variables.find { |v| v.title == vrr}
 
             var_attr = var.content['attribute']
