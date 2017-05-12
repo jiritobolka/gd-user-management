@@ -270,7 +270,7 @@ class UMan
                     then
 
                     values = row['value'].split(",")
-
+                    puts values
                     filters.push([row['user'], label] + values)
 
                 end
