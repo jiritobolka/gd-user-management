@@ -1,6 +1,6 @@
+require 'csv'
 require 'gooddata'
 require 'rest-client'
-require 'csv'
 require 'optparse'
 require 'yaml'
 require 'json'
