@@ -270,9 +270,10 @@ class UMan
                     then
 
                     values = row['value'].split(",")
-                    puts values
-                    filters.push([row['user'], label] + values)
 
+                    filters.push([row['user'], label] + values)
+                      puts row['user']
+                      puts values
                 end
             end
 
