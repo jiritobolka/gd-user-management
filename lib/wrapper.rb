@@ -1,3 +1,4 @@
+require 'gooddata'
 require 'rest-client'
 require 'csv'
 require 'optparse'
@@ -5,7 +6,6 @@ require 'yaml'
 require 'json'
 require 'time'
 require 'securerandom'
-require 'gooddata'
 require 'fileutils'
 
 class UMan
